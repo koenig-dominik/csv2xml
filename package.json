@@ -1,0 +1,23 @@
+{
+  "name": "csv2xml",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --outDir dist",
+    "debug": "npm run build && node dist/index.js -- test-data/in.csv test-data/out -xt test-data/template.xml"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "csv-parse": "^2.4.0",
+    "meow": "^5.0.0",
+    "update-notifier": "^2.5.0",
+    "xml2js": "^0.4.19",
+    "xmlbuilder": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^10.0.4",
+    "typescript": "^2.8.3"
+  }
+}

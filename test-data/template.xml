@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<import>
+    <node csv2xmlRepeat>
+        <name value="{{name}}">{{name}}</name>
+        <e-mail>{{eMail}}</e-mail>
+        <valid>{{valid}}</valid>
+        <date>{{date}}</date>
+        <location>{{location}}</location>
+        <code>{{code}}<code>
+    </node>
+</import>
