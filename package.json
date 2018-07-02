@@ -1,23 +1,22 @@
 {
   "name": "csv2xml",
   "version": "0.0.0",
-  "description": "",
+  "description": "A cli application to convert csv files to one or multiple xml files based on a xml template",
+  "repository": "github:koenig-dominik/csv2xml",
   "main": "index.js",
   "scripts": {
     "build": "tsc --outDir dist",
-    "debug": "npm run build && node dist/index.js -- test-data/in.csv test-data/out -xt test-data/template.xml"
+    "debug": "npm run build && node dist/index.js --xt=test-data/template.xml test-data/in.csv test-data/out"
   },
-  "author": "",
   "license": "MIT",
   "dependencies": {
-    "csv-parse": "^2.4.0",
+    "csv-parse": "^2.5.0",
     "meow": "^5.0.0",
     "update-notifier": "^2.5.0",
-    "xml2js": "^0.4.19",
-    "xmlbuilder": "^10.0.0"
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
-    "@types/node": "^10.0.4",
-    "typescript": "^2.8.3"
+    "@types/node": "^10.5.1",
+    "typescript": "^2.9.2"
   }
 }

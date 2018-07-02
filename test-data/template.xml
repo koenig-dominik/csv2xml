@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <import>
-    <node csv2xmlRepeat>
-        <name value="{{name}}">{{name}}</name>
-        <e-mail>{{eMail}}</e-mail>
-        <valid>{{valid}}</valid>
-        <date>{{date}}</date>
-        <location>{{location}}</location>
-        <code>{{code}}<code>
+    <node csv2xmlRepeat="">
+        <name value="${row.Name}">
+            ${row.Name}
+            <data type="pre">${row.Name}</data>
+            <data type="last">${row.Name}</data>
+            <data type="full">${row.Name} - ${row.Name}</data>
+        </name>
+        <e-mail>${row['E-mail']}</e-mail>
+        <valid>${row['Valid till']}</valid>
+        <date>${row.Date}</date>
+        <location>${row.Path}</location>
+        <code>${row['PU Org / Plant Code']}</code>
     </node>
 </import>

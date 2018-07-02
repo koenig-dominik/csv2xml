@@ -21,3 +21,7 @@
 Thumbs.db
 
 /dist
+/src/*.js
+/src/*.map
+
+/test-data/out.xml
