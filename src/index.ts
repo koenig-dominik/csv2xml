@@ -71,8 +71,8 @@ if(cli.input[1] === undefined) {
 }
 
 cli.input[1] = path.join(process.cwd(), cli.input[1]);
-if (!fs.accessSync(cli.input[1])) {
-    console.error(`The specified output path cannot be written to (${cli.input[1]})`);
+if (fs.accessSync(path.dirname(cli.input[1]), fs.constants.R_OK | fs.constants.W_OK) !== undefined) {
+    console.error(`The specified output path cannot be written to (${path.dirname(cli.input[1])})`);
     process.exit(1);
 }
 

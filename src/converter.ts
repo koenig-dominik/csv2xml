@@ -125,9 +125,34 @@ export default class Converter {
         fs.writeFileSync(this.outputPath, result);
     }
 
-    private getEvaluatedXmlNode(row: {[key: string]: string}): object {
+    private getEvaluatedXmlNode(row: {[key: string]: string}): object { // The variable row is available inside the eval
+        //This function is available inside the eval
+        let deleteSubNode = false;
+        const condition = function(condition) {
+            if(condition && condition !== '0') {
+                return '';
+            }
+
+            deleteSubNode = true;
+        };
+
         for(let replaceLocation of this.xmlReplaceLocations) {
-            replaceLocation.parent[replaceLocation.index] = eval('`' + replaceLocation.value + '`');
+            try {
+                let result = eval('`' + replaceLocation.value + '`');
+
+                if (!deleteSubNode) {
+                    replaceLocation.parent[replaceLocation.index] = result
+                } else {
+                    if (replaceLocation.parent instanceof Array) {
+                        replaceLocation.parent.splice(replaceLocation.index, 1); // TODO: the index stuff will fail, if a deletion occurs on the same parent twice, but only on arrays e.g. same tag name multiple times
+                    } else {
+                        delete replaceLocation.parent[replaceLocation.index];
+                    }
+                    deleteSubNode = false;
+                }
+            } catch(error) {
+                throw new Error('There was an error in your xml template javascript evaluation: ' + error.message + '\r\n at ' + JSON.stringify(replaceLocation.parent[replaceLocation.index]));
+            }
         }
 
         return JSON.parse(JSON.stringify(this.xmlRepeatTemplate));

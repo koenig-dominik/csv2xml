@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <import>
     <node csv2xmlRepeat="">
-        <name value="${row.Name}">
+        <name value="${row.Name + condition(row.Show)}">
             ${row.Name}
             <data type="pre">${row.Name}</data>
             <data type="last">${row.Name}</data>
             <data type="full">${row.Name} - ${row.Name}</data>
         </name>
-        <e-mail>${row['E-mail']}</e-mail>
+        <e-mail>${row['E-mail'] + condition(row.Show)}</e-mail>
         <valid>${row['Valid till']}</valid>
         <date>${row.Date}</date>
         <location>${row.Path}</location>
