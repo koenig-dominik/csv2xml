@@ -23,7 +23,7 @@ export default class Converter {
     private xmlReplaceLocations: ReplaceXmlLocation[];
     private xmlBuilder = new xml2js.Builder();
 
-    constructor(private delimiter: string, private xmlTemplatePath: string, private csvInputPath: string, private outputPath: string) {}
+    constructor(private csvInputPath: string, private outputPath: string, private xmlTemplatePath: string, private delimiter: string) {}
 
     public async init() {
         try {
