@@ -12,5 +12,11 @@
         <date>${row.Date}</date>
         <location>${row.Path}</location>
         <code>${row['PU Org / Plant Code']}</code>
+        <condition>
+            <data index="0">${row['E-mail'] + condition(row.Show)}</data>
+            <data index="1">${row['E-mail'] + condition(row.Show)}</data>
+            <data index="2">${row['E-mail']}</data>
+            <data index="3">${row['E-mail'] + condition(row.Show)}</data>
+        </condition>
     </node>
 </import>

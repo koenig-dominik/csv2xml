@@ -11,8 +11,10 @@ const containsTemplateExpressionRegex = /\${.*}/;
 
 interface ReplaceXmlLocation {
     value: string,
-    index: number,
-    parent: object
+	parent: object,
+    index: number | string,
+	superParent: object,
+	superIndex: number | string
 }
 
 export default class Converter {
@@ -20,7 +22,6 @@ export default class Converter {
     private xmlRepeatTemplate;
     private xmlRepeatEntryPoint;
     private xmlTemplate;
-    private xmlReplaceLocations: ReplaceXmlLocation[];
     private xmlBuilder = new xml2js.Builder();
 
     constructor(private csvInputPath: string, private outputPath: string, private xmlTemplatePath: string, private delimiter: string) {}
@@ -35,8 +36,6 @@ export default class Converter {
 
             (xmlRepeatNodeEntry as any[]).length = 0; // This clears the array
             this.xmlRepeatEntryPoint = xmlRepeatNodeEntry;
-
-            this.xmlReplaceLocations = Converter.getTemplateReplaceLocations(this.xmlRepeatTemplate);
 
         } catch(error) {
             if(error instanceof Error) {
@@ -87,27 +86,29 @@ export default class Converter {
     private static getTemplateReplaceLocations(template: object): ReplaceXmlLocation[] {
         let replaceLocations = [];
 
-        const getTemplateReplaceLocationsRecurse = (node: object | string | string[] | object[], parent: object, index: number | string) => {
+        const getTemplateReplaceLocationsRecurse = (node: object | string | string[] | object[], parent: object, index: number | string, superParent: object, superIndex: number | string) => {
             if(typeof node === 'string') { // The node is a direct value
                 if(node.match(containsTemplateExpressionRegex) !== null) { // Check if the value contains ${}
                     replaceLocations.push({
                         value: node,
                         index: index,
-                        parent: parent
-                    })
+                        parent: parent,
+						superParent: superParent,
+						superIndex: superIndex
+                    });
                 }
             } else if(node instanceof Array) { // The node is not a value and can have children
                 for(let i = 0; i < node.length; i++) {
-                    getTemplateReplaceLocationsRecurse(node[i], node, i);
+                    getTemplateReplaceLocationsRecurse(node[i], node, i, parent, index);
                 }
             } else { // The node must be an object
                 for(const [key, child] of Object.entries(node)) {
-                    getTemplateReplaceLocationsRecurse(child, node, key);
+                    getTemplateReplaceLocationsRecurse(child, node, key, parent, index);
                 }
             }
         };
 
-        getTemplateReplaceLocationsRecurse(template, null, null);
+        getTemplateReplaceLocationsRecurse(template, null, null, null, null);
 
         return replaceLocations;
     }
@@ -126,27 +127,50 @@ export default class Converter {
     }
 
     private getEvaluatedXmlNode(row: {[key: string]: string}): object { // The variable row is available inside the eval
+		let xmlRepeatObject = JSON.parse(JSON.stringify(this.xmlRepeatTemplate));
+		let xmlReplaceLocations = Converter.getTemplateReplaceLocations(xmlRepeatObject);
+	
         //This function is available inside the eval
         let deleteSubNode = false;
-        const condition = function(condition) {
-            if(condition && condition !== '0') {
-                return '';
+        let deletedIndices = new Map<object, number[]>();
+        const condition = function(value) {
+            if(!value) {
+                deleteSubNode = true;
             }
-
-            deleteSubNode = true;
+			
+			return '';
         };
-
-        for(let replaceLocation of this.xmlReplaceLocations) {
+        for(let replaceLocation of xmlReplaceLocations) {
             try {
-                let result = eval('`' + replaceLocation.value + '`');
+                replaceLocation.parent[replaceLocation.index] = eval('`' + replaceLocation.value + '`');
+                if (deleteSubNode) {					
+					let deleteParent: object;
+					let deleteIndex: string | number;
+					if(replaceLocation.index === '_') {
+						deleteParent = replaceLocation.superParent;
+						deleteIndex = replaceLocation.superIndex;
+					} else {
+						deleteParent = replaceLocation.parent;
+						deleteIndex = replaceLocation.index;
+					}
+					
+                    if (deleteParent instanceof Array) {
 
-                if (!deleteSubNode) {
-                    replaceLocation.parent[replaceLocation.index] = result
-                } else {
-                    if (replaceLocation.parent instanceof Array) {
-                        replaceLocation.parent.splice(replaceLocation.index, 1); // TODO: the index stuff will fail, if a deletion occurs on the same parent twice, but only on arrays e.g. same tag name multiple times
-                    } else {
-                        delete replaceLocation.parent[replaceLocation.index];
+                        let adjustedDeleteIndex = deleteIndex as number;
+                        if(deletedIndices.has(deleteParent)) {
+                            for(let deletedIndex of deletedIndices.get(deleteParent)) {
+                                if(deleteIndex > deletedIndex) {
+                                    adjustedDeleteIndex--;
+                                }
+                            }
+                        } else {
+                            deletedIndices.set(deleteParent, []);
+                        }
+                        deleteParent.splice(adjustedDeleteIndex, 1);
+
+                        deletedIndices.get(deleteParent).push(deleteIndex as number);
+					} else {
+						delete deleteParent[deleteIndex];
                     }
                     deleteSubNode = false;
                 }
@@ -155,7 +179,7 @@ export default class Converter {
             }
         }
 
-        return JSON.parse(JSON.stringify(this.xmlRepeatTemplate));
+        return xmlRepeatObject;
     }
 
     private static getRecordMap(data: string[][]): {[key: string]: string}[] {
@@ -188,7 +212,7 @@ export default class Converter {
 
                 resolve(data);
             }));
-        })
+        });
     }
 
 }

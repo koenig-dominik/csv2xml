@@ -7,7 +7,7 @@
   "bin": "dist/index.js",
   "scripts": {
     "build": "tsc --outDir dist",
-    "debug": "npm run build && node dist/index.js test-data/in.csv test-data/out.xml --xt=test-data/template.xml",
+    "debug": "npm run build && node dist/index.js test-data/in.csv test-data/out.xml --xt=test-data/template.xml --d=;",
     "build:binary": "npm run build && pkg . --out-path=dist/bin"
   },
   "license": "MIT",

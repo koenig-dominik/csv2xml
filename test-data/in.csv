@@ -1,7 +1,7 @@
 Name,E-mail,Valid till,PU Org / Plant Code,Date,Path,Show
-Dominik,dominik@gmail.com,1990/01/12,55,1990/01/12,//blah/test,0
-Frank,frank@hotmail.com,1990/01/13,12,1990/01/13,//blah/test,1
-Tobi,tobi@googlemail.com,1990/01/14,54,1990/01/14,//blah/test,1
-Susi,susi@msn.com,1990/01/15,51,1990/01/15,//blah/test,1
-John,john@jquery.com,1990/01/16,1,1990/01/16,//blah/test,1
-Max,max@mustermann.de,1990/01/17,88,1990/30/17,//blah/test,1
+Dominik,dominik@gmail.com,1990/01/12,55,1990/01/12,//blah/test,yes
+Frank,frank@hotmail.com,1990/01/13,12,1990/01/13,//blah/test,yes
+Tobi,tobi@googlemail.com,1990/01/14,54,1990/01/14,//blah/test,
+Susi,susi@msn.com,1990/01/15,51,1990/01/15,//blah/test,
+John,john@jquery.com,1990/01/16,1,1990/01/16,//blah/test,yes
+Max,max@mustermann.de,1990/01/17,88,1990/30/17,//blah/test,
